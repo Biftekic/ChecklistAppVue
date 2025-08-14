@@ -5,11 +5,18 @@ import CategoriesPage from '@/views/CategoriesPage.vue'
 import TemplatesPage from '@/views/TemplatesPage.vue'
 import SettingsPage from '@/views/SettingsPage.vue'
 import AboutPage from '@/views/AboutPage.vue'
+import CleaningChecklistBuilder from '@/views/CleaningChecklistBuilder.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',
+    component: CleaningChecklistBuilder,
+    meta: { title: 'Cleaning Checklist Builder' }
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
     component: HomePage,
     meta: { title: 'Dashboard' }
   },
@@ -64,7 +71,7 @@ const router = createRouter({
 
 // Update page title based on route
 router.beforeEach((to, from, next) => {
-  document.title = `${to.meta.title || 'Page'} - Vue Checklist App`
+  document.title = `${to.meta.title || 'Page'} - Cleaning Checklist Builder`
   next()
 })
 
