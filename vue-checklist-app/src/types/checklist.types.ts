@@ -27,13 +27,21 @@ export interface Category {
 }
 
 export interface ChecklistFilter {
-  categoryId?: string
-  priority?: Priority
-  status?: ChecklistItemStatus
-  searchQuery?: string
+  categoryId?: string | null
+  priority?: Priority | null
+  status?: ChecklistItemStatus | null
+  searchTerm?: string
+  searchQuery?: string  // Deprecated, use searchTerm
   tags?: string[]
   dueDateFrom?: Date
   dueDateTo?: Date
+  dateRange?: {
+    start: Date | null
+    end: Date | null
+  }
+  completed?: boolean
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
 }
 
 export interface ChecklistStats {

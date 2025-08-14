@@ -22,6 +22,9 @@
       </div>
     </div>
 
+    <!-- Filter Preset Bar -->
+    <FilterPresetBar class="mb-6" />
+
     <!-- Filters and Search -->
     <div class="mb-6 p-4 bg-white dark:bg-gray-900 rounded-lg shadow">
       <div class="flex flex-col md:flex-row gap-4">
@@ -133,11 +136,14 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useChecklistStore } from '@/stores/checklist.store'
+import { useFilterPresetsStore } from '@/stores/filterPresets.store'
 import ChecklistItem from './ChecklistItem.vue'
 import TaskModal from './TaskModal.vue'
+import FilterPresetBar from './filters/FilterPresetBar.vue'
 import type { ChecklistItem as ChecklistItemType, Priority, ChecklistItemStatus } from '@/types/checklist.types'
 
 const store = useChecklistStore()
+const filterStore = useFilterPresetsStore()
 
 const showAddModal = ref(false)
 const editingItem = ref<ChecklistItemType | null>(null)

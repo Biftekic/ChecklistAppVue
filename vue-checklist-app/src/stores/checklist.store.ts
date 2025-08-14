@@ -43,20 +43,30 @@ export const useChecklistStore = defineStore('checklist', () => {
   const filteredItems = computed(() => {
     let result = [...items.value]
 
+    // Category filter
     if (filter.value.categoryId) {
       result = result.filter(item => item.categoryId === filter.value.categoryId)
     }
 
+    // Priority filter
     if (filter.value.priority) {
       result = result.filter(item => item.priority === filter.value.priority)
     }
 
+    // Status filter
     if (filter.value.status) {
       result = result.filter(item => item.status === filter.value.status)
     }
 
-    if (filter.value.searchQuery) {
-      const query = filter.value.searchQuery.toLowerCase()
+    // Completed filter
+    if (filter.value.completed !== undefined) {
+      result = result.filter(item => item.completed === filter.value.completed)
+    }
+
+    // Search filter (support both searchTerm and searchQuery for backwards compatibility)
+    const searchTerm = filter.value.searchTerm || filter.value.searchQuery
+    if (searchTerm) {
+      const query = searchTerm.toLowerCase()
       result = result.filter(item => 
         item.title.toLowerCase().includes(query) ||
         item.description?.toLowerCase().includes(query) ||
@@ -64,25 +74,77 @@ export const useChecklistStore = defineStore('checklist', () => {
       )
     }
 
+    // Tags filter
     if (filter.value.tags && filter.value.tags.length > 0) {
       result = result.filter(item =>
         filter.value.tags!.some(tag => item.tags.includes(tag))
       )
     }
 
-    if (filter.value.dueDateFrom) {
-      result = result.filter(item =>
-        item.dueDate && new Date(item.dueDate) >= filter.value.dueDateFrom!
-      )
+    // Date range filter (new format)
+    if (filter.value.dateRange) {
+      const { start, end } = filter.value.dateRange
+      if (start) {
+        result = result.filter(item =>
+          item.dueDate && new Date(item.dueDate) >= start
+        )
+      }
+      if (end) {
+        result = result.filter(item =>
+          item.dueDate && new Date(item.dueDate) <= end
+        )
+      }
+    } else {
+      // Legacy date filters
+      if (filter.value.dueDateFrom) {
+        result = result.filter(item =>
+          item.dueDate && new Date(item.dueDate) >= filter.value.dueDateFrom!
+        )
+      }
+      if (filter.value.dueDateTo) {
+        result = result.filter(item =>
+          item.dueDate && new Date(item.dueDate) <= filter.value.dueDateTo!
+        )
+      }
     }
 
-    if (filter.value.dueDateTo) {
-      result = result.filter(item =>
-        item.dueDate && new Date(item.dueDate) <= filter.value.dueDateTo!
-      )
-    }
+    // Sorting
+    const sortBy = filter.value.sortBy || 'order'
+    const sortOrder = filter.value.sortOrder || 'asc'
+    
+    result.sort((a, b) => {
+      let compareResult = 0
+      
+      switch (sortBy) {
+        case 'title':
+          compareResult = a.title.localeCompare(b.title)
+          break
+        case 'priority':
+          const priorityOrder = { urgent: 0, high: 1, medium: 2, low: 3 }
+          compareResult = priorityOrder[a.priority] - priorityOrder[b.priority]
+          break
+        case 'dueDate':
+          if (!a.dueDate && !b.dueDate) compareResult = 0
+          else if (!a.dueDate) compareResult = 1
+          else if (!b.dueDate) compareResult = -1
+          else compareResult = new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+          break
+        case 'createdAt':
+          compareResult = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          break
+        case 'updatedAt':
+          compareResult = new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+          break
+        case 'order':
+        default:
+          compareResult = a.order - b.order
+          break
+      }
+      
+      return sortOrder === 'desc' ? -compareResult : compareResult
+    })
 
-    return result.sort((a, b) => a.order - b.order)
+    return result
   })
 
   const stats = computed<ChecklistStats>(() => {
@@ -212,6 +274,11 @@ export const useChecklistStore = defineStore('checklist', () => {
     filter.value = newFilter
   }
 
+  function setFilters(newFilter: ChecklistFilter) {
+    // Alias for setFilter for consistency with filterPresets store
+    filter.value = newFilter
+  }
+
   function clearFilter() {
     filter.value = {}
   }
@@ -301,6 +368,7 @@ export const useChecklistStore = defineStore('checklist', () => {
     toggleItemComplete,
     reorderItems,
     setFilter,
+    setFilters,
     clearFilter,
     exportData,
     importData,
