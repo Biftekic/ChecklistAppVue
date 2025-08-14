@@ -376,24 +376,50 @@ onMounted(() => {
 }
 
 .tab-count {
-  @apply px-2 py-0.5 text-xs bg-gray-200 dark:bg-gray-700 rounded-full;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  background-color: rgb(229 231 235);
+  border-radius: 9999px;
+}
+
+.dark .tab-count {
+  background-color: rgb(55 65 81);
 }
 
 .templates-container {
-  @apply flex-1 overflow-y-auto p-4;
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
 }
 
 .loading-state,
 .empty-state {
-  @apply flex flex-col items-center justify-center h-64;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 16rem;
 }
 
 .spinner {
-  @apply w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin;
+  width: 2rem;
+  height: 2rem;
+  border-width: 4px;
+  border-color: rgb(59 130 246);
+  border-top-color: transparent;
+  border-radius: 9999px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 .empty-icon {
-  @apply w-16 h-16 text-gray-400 mb-4;
+  width: 4rem;
+  height: 4rem;
+  color: rgb(156 163 175);
+  margin-bottom: 1rem;
 }
 
 .templates-grid {

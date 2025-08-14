@@ -517,15 +517,24 @@ function formatTime(minutes: number): string {
 
 <style scoped>
 .template-customizer {
-  @apply w-full h-full overflow-y-auto;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .no-template {
-  @apply flex items-center justify-center h-64 text-gray-500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(107 114 128);
+  height: 16rem;
 }
 
 .customizer-content {
-  @apply p-6 space-y-6;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .customizer-header {

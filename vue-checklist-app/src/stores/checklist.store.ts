@@ -336,6 +336,18 @@ export const useChecklistStore = defineStore('checklist', () => {
     filter.value = {}
   }
 
+  // Alias for deleteCategory
+  function removeCategory(id: string) {
+    deleteCategory(id)
+  }
+
+  // Apply a template by adding its items to the checklist
+  function applyTemplate(templateId: string) {
+    // This will be implemented when integrating with template store
+    // For now, just return
+    return
+  }
+
   // Initialize default category if none exist
   if (categories.value.length === 0) {
     addCategory({
@@ -372,6 +384,8 @@ export const useChecklistStore = defineStore('checklist', () => {
     clearFilter,
     exportData,
     importData,
-    clearAll
+    clearAll,
+    removeCategory,
+    applyTemplate
   }
 })

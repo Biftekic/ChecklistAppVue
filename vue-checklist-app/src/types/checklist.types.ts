@@ -24,6 +24,8 @@ export interface Category {
   order: number
   createdAt: Date
   updatedAt: Date
+  description?: string
+  priority?: string
 }
 
 export interface ChecklistFilter {
