@@ -1,6 +1,14 @@
-# Vue Checklist Application
+# Vue Checklist Application v1.1.0
 
-A modern, feature-rich checklist/todo application built with Vue 3, TypeScript, and Tailwind CSS.
+A modern, feature-rich checklist/todo application built with Vue 3, TypeScript, and Tailwind CSS. Now with enhanced user experience features including keyboard shortcuts, bulk operations, advanced filtering, and undo/redo functionality.
+
+## 🚀 Version 1.1.0 - Enhanced User Experience
+
+### What's New
+- **Keyboard Shortcuts**: Navigate and manage tasks without touching the mouse
+- **Bulk Operations**: Select and modify multiple tasks at once
+- **Enhanced Filtering**: Save custom filter presets for quick access
+- **Undo/Redo System**: Never lose work with comprehensive action history
 
 ## Features
 
@@ -12,6 +20,37 @@ A modern, feature-rich checklist/todo application built with Vue 3, TypeScript, 
 - 🏷️ **Tags**: Add multiple tags to tasks for better organization
 - 🔍 **Search & Filtering**: Filter by category, priority, status, tags, and search text
 - 📊 **Statistics Dashboard**: Track total, completed, pending, and overdue tasks
+
+### Version 1.1.0 Features
+
+#### ⌨️ Keyboard Shortcuts
+- **Navigation**: `j/k` (next/previous), `g+h` (home), `g+t` (templates)
+- **Actions**: `Cmd/Ctrl+N` (new task), `Space` (toggle), `x` (select), `Delete` (delete selected)
+- **Search**: `Cmd/Ctrl+K` or `/` (focus search), `Escape` (clear)
+- **Editing**: `e` (edit), `Cmd/Ctrl+Z` (undo), `Cmd/Ctrl+Shift+Z` (redo), `d+d` (duplicate)
+- **Help**: `?` (show shortcuts guide)
+
+#### 📦 Bulk Operations
+- Multi-select with checkboxes or `Shift+Click`
+- Select all with `Shift+X`
+- Bulk complete, delete, move, set priority, add/remove tags
+- Visual selection mode with floating action bar
+- Range selection support
+
+#### 🔍 Enhanced Filtering System
+- **Saved Presets**: Save frequently used filter combinations
+- **Default Presets**: Today, This Week, High Priority, Overdue, Completed, Pending
+- **Quick Filters**: One-click filters for common operations
+- **Advanced Filtering**: Combine multiple criteria (categories, priorities, tags, dates, status)
+- **Sorting Options**: Sort by title, priority, due date, created/updated date
+- **Recent Searches**: Automatic tracking of search history
+- **Visual Feedback**: Active filter chips with clear indications
+
+#### ↩️ Undo/Redo System
+- Complete action history (up to 50 actions)
+- Works with all operations: create, update, delete, move, bulk actions
+- Visual feedback with action descriptions
+- Keyboard shortcuts: `Cmd/Ctrl+Z` (undo), `Cmd/Ctrl+Shift+Z` (redo)
 
 ### Advanced Features
 - 🔄 **Drag & Drop**: Reorder tasks with drag-and-drop functionality
@@ -29,21 +68,36 @@ A modern, feature-rich checklist/todo application built with Vue 3, TypeScript, 
 - **Vite** - Fast build tool
 - **Vitest** - Unit testing framework
 - **@vueuse/core** - Collection of Vue composition utilities
+- **date-fns** - Modern JavaScript date utility library
 
 ## Project Structure
 
 ```
 src/
 ├── components/           # Vue components
+│   ├── filters/            # Filter components (v1.1.0)
+│   │   ├── FilterPresetBar.vue     # Filter preset tabs and quick filters
+│   │   └── AdvancedFilterModal.vue # Advanced filtering modal
+│   ├── templates/          # Template components
+│   │   ├── TemplateSelector.vue    # Template selection interface
+│   │   └── TemplateCustomizer.vue  # Template customization
 │   ├── ChecklistItem.vue     # Individual task item component
 │   ├── ChecklistContainer.vue # Main checklist container
 │   ├── CategoryManager.vue   # Category management sidebar
 │   └── TaskModal.vue         # Add/Edit task modal
+├── composables/         # Vue composables (v1.1.0)
+│   ├── useKeyboardShortcuts.ts # Keyboard shortcut system
+│   └── useUndoRedo.ts          # Undo/redo functionality
 ├── stores/              # Pinia stores
-│   ├── index.ts            # Store initialization
-│   └── checklist.store.ts  # Main checklist store
+│   ├── bulkOperations.store.ts  # Bulk operations (v1.1.0)
+│   ├── checklist.store.ts       # Main checklist store
+│   ├── filterPresets.store.ts   # Filter presets (v1.1.0)
+│   ├── template.store.ts        # Template management
+│   └── index.ts                 # Store initialization
 ├── types/               # TypeScript type definitions
-│   └── checklist.types.ts  # Checklist-related types
+│   ├── checklist.types.ts  # Checklist-related types
+│   ├── filter.types.ts     # Filter types (v1.1.0)
+│   └── template.types.ts   # Template types
 ├── tests/               # Test files
 │   └── setup.ts           # Test configuration
 ├── App.vue             # Root component
