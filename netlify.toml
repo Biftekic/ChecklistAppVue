@@ -6,7 +6,7 @@
   base = "vue-checklist-app"
   
   # Directory that contains the deploy-ready files
-  publish = "dist"
+  publish = "vue-checklist-app/dist"
   
   # Build command
   command = "npm run build"
