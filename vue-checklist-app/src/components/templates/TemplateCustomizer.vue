@@ -435,8 +435,8 @@ function addCustomTask(roomId: string) {
 }
 
 function editCustomTask(task: TaskTemplate) {
-  // Open edit modal for custom task
-  console.log('Edit custom task:', task)
+  // TODO: Implement edit modal for custom task
+  // For now, this is a placeholder for future functionality
 }
 
 function removeCustomTask(taskId: string) {
