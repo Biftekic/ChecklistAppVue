@@ -79,7 +79,7 @@ describe('PersistenceService', () => {
       const originalSetItem = localStorage.setItem
       localStorage.setItem = vi.fn().mockImplementation(() => {
         const error = new DOMException('QuotaExceededError')
-        error.name = 'QuotaExceededError'
+        Object.defineProperty(error, 'name', { value: 'QuotaExceededError' })
         throw error
       })
 

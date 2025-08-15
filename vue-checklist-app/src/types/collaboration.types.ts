@@ -14,7 +14,7 @@ export interface TeamPermissions {
   canCreateChecklists: boolean
   canEditChecklists: boolean
   canDeleteChecklists: boolean
-  canCompleteT asks: boolean
+  canCompleteTasks: boolean
   canAssignTasks: boolean
   canInviteMembers: boolean
   canManageTeam: boolean
@@ -175,7 +175,7 @@ export interface TeamStats {
   completedChecklists: number
   totalTasks: number
   completedTasks: number
-  overdueT asks: number
+  overdueTasks: number
   averageCompletionTime: number
   topPerformers: TeamMember[]
   recentActivity: TeamActivity[]

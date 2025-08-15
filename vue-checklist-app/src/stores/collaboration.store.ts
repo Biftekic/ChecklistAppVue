@@ -74,7 +74,7 @@ export const useCollaborationStore = defineStore('collaboration', () => {
   
   const myAssignments = computed(() => {
     if (!currentUser.value) return []
-    return taskAssignments.value.filter(a => a.assignedTo === currentUser.value.id)
+    return taskAssignments.value.filter(a => a.assignedTo === currentUser.value!.id)
   })
   
   const teamStats = computed<TeamStats>(() => {
@@ -125,7 +125,7 @@ export const useCollaborationStore = defineStore('collaboration', () => {
       name,
       description,
       members: [currentUser.value],
-      ownerId: currentUser.value.id,
+      ownerId: currentUser.value!.id,
       createdAt: new Date(),
       updatedAt: new Date(),
       settings: {
@@ -239,7 +239,7 @@ export const useCollaborationStore = defineStore('collaboration', () => {
     const assignment: TaskAssignment = {
       taskId,
       assignedTo: memberId,
-      assignedBy: currentUser.value.id,
+      assignedBy: currentUser.value!.id,
       assignedAt: new Date(),
       dueDate,
       priority: priority || 'medium',
@@ -352,7 +352,7 @@ export const useCollaborationStore = defineStore('collaboration', () => {
         memberId,
         'comment_mention',
         'You were mentioned',
-        `${currentUser.value.name} mentioned you in a comment`,
+        `${currentUser.value!.name} mentioned you in a comment`,
         { commentId: comment.id, checklistId }
       )
     })
