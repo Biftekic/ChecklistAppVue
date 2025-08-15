@@ -14,6 +14,7 @@ export interface ChecklistItem {
   updatedAt: Date
   order: number
   status: ChecklistItemStatus
+  notes?: string
 }
 
 export interface Category {
@@ -60,6 +61,11 @@ export interface ExportData {
   exportDate: Date
   categories: Category[]
   items: ChecklistItem[]
+  metadata?: {
+    totalItems: number
+    totalCategories: number
+    completedItems: number
+  }
 }
 
 export interface ImportResult {
@@ -69,4 +75,20 @@ export interface ImportResult {
     items: number
   }
   errors: string[]
+  data?: Partial<ExportData>
+}
+
+export interface BackupInfo {
+  date: Date
+  itemCount: number
+  categoryCount: number
+}
+
+export interface StorageStats {
+  used: number
+  quota: number
+  percentage: number
+  itemsSize: number
+  categoriesSize: number
+  backupsSize: number
 }

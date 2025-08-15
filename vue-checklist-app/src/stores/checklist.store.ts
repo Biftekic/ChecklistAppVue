@@ -7,9 +7,12 @@ import type {
   ChecklistStats,
   Priority,
   ExportData,
-  ImportResult
+  ImportResult,
+  BackupInfo,
+  StorageStats
 } from '@/types/checklist.types'
 import { useLocalStorage } from '@vueuse/core'
+import { PersistenceService } from '@/services/persistence.service'
 
 export const useChecklistStore = defineStore('checklist', () => {
   // State
@@ -22,13 +25,19 @@ export const useChecklistStore = defineStore('checklist', () => {
   const storedItems = useLocalStorage('checklist-items', items.value)
   const storedCategories = useLocalStorage('checklist-categories', categories.value)
 
-  // Sync with local storage
+  // Enhanced sync with validation
   watch(items, (newItems) => {
-    storedItems.value = newItems
+    const success = PersistenceService.saveToLocalStorage('checklist-items-v2', newItems)
+    if (success) {
+      storedItems.value = newItems
+    }
   }, { deep: true })
 
   watch(categories, (newCategories) => {
-    storedCategories.value = newCategories
+    const success = PersistenceService.saveToLocalStorage('checklist-categories-v2', newCategories)
+    if (success) {
+      storedCategories.value = newCategories
+    }
   }, { deep: true })
 
   // Initialize from local storage
@@ -283,15 +292,36 @@ export const useChecklistStore = defineStore('checklist', () => {
     filter.value = {}
   }
 
+  // Enhanced Export Functions
   function exportData(): ExportData {
-    return {
-      version: '1.0.0',
+    const data: ExportData = {
+      version: '2.0.0',
       exportDate: new Date(),
       categories: categories.value,
-      items: items.value
+      items: items.value,
+      metadata: {
+        totalItems: items.value.length,
+        totalCategories: categories.value.length,
+        completedItems: items.value.filter(i => i.completed).length
+      }
     }
+    
+    // Create automatic backup
+    PersistenceService.createBackup(items.value, categories.value)
+    
+    return data
   }
 
+  function exportToJSON(): void {
+    const data = exportData()
+    PersistenceService.exportToJSON(data)
+  }
+
+  function exportToCSV(): void {
+    PersistenceService.exportToCSV(items.value, categories.value)
+  }
+
+  // Enhanced Import Functions
   function importData(data: ExportData): ImportResult {
     const result: ImportResult = {
       success: false,
@@ -301,10 +331,14 @@ export const useChecklistStore = defineStore('checklist', () => {
 
     try {
       // Validate data structure
-      if (!data.version || !data.categories || !data.items) {
-        result.errors.push('Invalid data format')
+      const validation = PersistenceService.validateData(data)
+      if (!validation.valid) {
+        result.errors = validation.errors
         return result
       }
+
+      // Create backup before import
+      PersistenceService.createBackup(items.value, categories.value)
 
       // Import categories
       data.categories.forEach(category => {
@@ -328,6 +362,77 @@ export const useChecklistStore = defineStore('checklist', () => {
     }
 
     return result
+  }
+
+  async function importFromFile(file: File): Promise<ImportResult> {
+    let result: ImportResult
+    
+    if (file.name.endsWith('.json')) {
+      result = await PersistenceService.importFromJSON(file)
+      if (result.success && result.data) {
+        return importData(result.data as ExportData)
+      }
+    } else if (file.name.endsWith('.csv')) {
+      result = await PersistenceService.importFromCSV(file, categories.value)
+      if (result.success && result.data?.items) {
+        // Create backup before import
+        PersistenceService.createBackup(items.value, categories.value)
+        
+        // Import CSV items
+        result.data.items.forEach(item => {
+          if (!items.value.find(i => i.id === item.id)) {
+            items.value.push(item)
+          }
+        })
+      }
+    } else {
+      result = {
+        success: false,
+        imported: { categories: 0, items: 0 },
+        errors: ['Unsupported file format. Please use JSON or CSV files.']
+      }
+    }
+    
+    return result
+  }
+
+  // Backup and Restore Functions
+  function createBackup(): string {
+    return PersistenceService.createBackup(items.value, categories.value)
+  }
+
+  function getBackupList(): BackupInfo[] {
+    return PersistenceService.getBackupList()
+  }
+
+  function restoreFromBackup(backupIndex: number = 0): boolean {
+    const backup = PersistenceService.restoreBackup(backupIndex)
+    
+    if (backup) {
+      // Clear current data
+      items.value = []
+      categories.value = []
+      
+      // Restore from backup
+      const result = importData(backup)
+      return result.success
+    }
+    
+    return false
+  }
+
+  // Storage Management
+  async function getStorageStats(): Promise<StorageStats> {
+    return PersistenceService.getStorageStats()
+  }
+
+  function clearAllData(): void {
+    if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+      PersistenceService.clearAllData()
+      items.value = []
+      categories.value = []
+      filter.value = {}
+    }
   }
 
   function clearAll() {
@@ -382,9 +487,25 @@ export const useChecklistStore = defineStore('checklist', () => {
     setFilter,
     setFilters,
     clearFilter,
+    
+    // Export/Import
     exportData,
+    exportToJSON,
+    exportToCSV,
     importData,
+    importFromFile,
+    
+    // Backup/Restore
+    createBackup,
+    getBackupList,
+    restoreFromBackup,
+    
+    // Storage Management
+    getStorageStats,
+    clearAllData,
     clearAll,
+    
+    // Aliases
     removeCategory,
     applyTemplate
   }
