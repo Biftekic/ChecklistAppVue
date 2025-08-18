@@ -17,7 +17,7 @@
     "reinstall": "npm run clean && npm install"
   },
   "dependencies": {
-    "@types/node": "^24.2.1",
+    "@types/node": "^24.3.0",
     "@vue/test-utils": "^2.4.6",
     "@vueuse/core": "^13.6.0",
     "autoprefixer": "^10.4.21",
