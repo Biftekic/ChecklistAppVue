@@ -39,7 +39,7 @@ jobs:
       working-directory: ./vue-checklist-app
     
     - name: Upload coverage reports
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       with:
         directory: ./vue-checklist-app/coverage
         flags: unittests
